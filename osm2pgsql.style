@@ -1,0 +1,61 @@
+#Drag OSM xml file into a database with osm2pgsql
+#osm2pgsql -d database_name -v -S style_file.style -U username -p table_prefix -c file_name.osm
+
+# WAYS
+node,way   highway      text         
+way        cycleway     text   # bike lanes
+way        cycleway:left text  # bike lanes
+way        cycleway:right text  # bike lanes
+way        ref          text   # bus route numbers
+node,way   surface      text     
+way        lanes        real   # for rendering width
+way        maxspeed     text   # for rendering color. Is text for ' mph' suffix
+node,way   bicycle      text         
+node,way   access       text         
+node,way   bridge       text         
+node,way   cutting      text         
+way        tracktype    text         
+way        tunnel       text         
+way        embankment   text         
+way        route        text   # buses and stuff  
+way        service      text         
+way        oneway       text         
+node,way   junction     text         
+way        width        text   # have never yet used this
+way        footway      text   # most likely used for 'sidewalk'
+
+# BUILDINGS
+node,way   building     text         polygon
+way        building:levels real      polygon
+
+# LAND 
+node,way   landuse      text         polygon
+node,way   construction text         linear
+
+# NATURAL
+way        natural      text         polygon
+way        water        text         polygon
+way        waterway     text         polygon
+
+# POINTS (MOSTLY)
+node,way   shop         text         polygon    # bicycle, etc
+node,way   capacity     text                    # bike rack capacity
+node,way   covered      text                    # bike racks
+node,way   place        text         polygon
+node,way   tourism      text         polygon    # hostel?
+node,way   amenity      text         polygon    # bicycle_parking, car_sharing
+
+# OTHER
+way        area         text         linear
+node,way   aeroway      text         polygon
+node,way   barrier      text         linear
+node,way   layer        real         linear
+node,way   leisure      text         polygon
+node,way   man_made     text         polygon   # embankment, pier
+node,way   name         text 
+node,way   short_name   text                   # will use this column for labels
+node,way   loc_name     text                   # will use this column for labels
+node,way   operator     text         linear
+node,way   railway      text         linear
+node,way   sport        text         polygon
+node,way   wall         text         linear
