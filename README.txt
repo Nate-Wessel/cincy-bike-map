@@ -3,3 +3,6 @@ bits of code and other stuff necessary to recreate the Cincinnati Bike Map of 20
 
 Please see http://www.cincymap.org/blog/diy-cincinnati-bike-map-kit/ 
 for a full description of this repository and how and why to use it
+
+For general description of the project:
+http://wiki.openstreetmap.org/wiki/Cincinnati_Bike_Map
