@@ -8,7 +8,8 @@ SELECT --lets just enumerate all the columns here
 	ST_Transform(geom_way,3735) AS the_geom,
 	source,
 	target,
-	--we'll populate these from another table in just a moment
+	--we'll populate these from the other table in just a moment
+	--for now they are empty
 	null::varchar AS highway,
 	null::varchar AS label,
 	null::varchar AS cycleway,
@@ -27,10 +28,10 @@ SELECT --lets just enumerate all the columns here
 	null::varchar AS service_is_in,
 	-- this is a spatial measure of length in miles
 	ST_Length(ST_Transform(geom_way,3735)) / 5280 AS miles,
-	--is part of primary biconnected component?
+	--is part of primary biconnected component? TRUE = no
 	false::boolean AS dangling
 INTO cincy_segments
-FROM c_2po_4pgr;  --<<----------<<---------SOURCE TABLE NAME--------<<--
+FROM c_2po_4pgr;  --<<----------<<---------SOURCE EDGE TABLE NAME--------<<--
 
 -- for the join
 CREATE INDEX ON cincy_segments (osm_id);
@@ -77,10 +78,12 @@ WHERE
 	service_is_in IN ('golf_course')
 	OR
 	bicycle IN ('no');
-
+	
+----------------------------------------------------------------------------
 /*--------------------------------------------------------------------------
 -----RUN tarjan.php at this point to detect dangling components-------------
 ---------------------------------------------------------------------------*/
+---------------------------------------------------------------------------
 
 --Delete minor dangling roads and paths-to-nowhere. 
 DELETE FROM cincy_segments
@@ -88,31 +91,3 @@ WHERE
 	( highway = 'service' AND dangling )
 	OR 
 	( highway = 'path' AND (bicycle IS NULL OR bicycle != 'designated') AND dangling);
-
-
---JUST FOR FUNSIES
-/*
-ALTER TABLE cincy_segments ADD COLUMN weight real;
-UPDATE cincy_segments SET weight = 
-CASE 
-	WHEN dangling THEN - miles 
-	ELSE miles
-END;
-
-ALTER TABLE cincy_segments ADD COLUMN centroid geometry(POINT,3735);
-UPDATE cincy_segments SET centroid = ST_Centroid(the_geom);
-
--- create a table of nodes for doing a driving distance interpolation
-
-DROP TABLE IF EXISTS nodes;
-SELECT 
-	DISTINCT target AS id,
-	ST_EndPoint(the_geom) AS the_geom
-INTO nodes
-FROM cincy_segments
-UNION
-SELECT 
-	DISTINCT source AS id,
-	ST_StartPoint(the_geom) AS the_geom
-FROM cincy_segments;
-*/
