@@ -1,7 +1,16 @@
-﻿
+/*
+This SQL script is designed to create a duplicate of the edge table that has 
+been imported with osm2po, adding fields from the table imported with 
+osm2pgsql, which is the one that has all the actual meaningful attributes.
+It them modifies the duplicate table to remove edges that shouldn't be in 
+the network graph. 
+
+After this has been done, and in the middle of this script, run tarjan.php 
+to identify biconnected subcomponents. Once that has run, minor dangling 
+paths can be dropped as well.
+*/
+
 -- add all fields useful to rendering highways to a split line table
--- split off from the network table from pgRouting
-DROP TABLE IF EXISTS cincy_segments;
 SELECT --lets just enumerate all the columns here
 	id AS edge_id,
 	osm_id,
@@ -36,7 +45,7 @@ FROM c_2po_4pgr;  --<<----------<<---------SOURCE EDGE TABLE NAME--------<<--
 -- for the join
 CREATE INDEX ON cincy_segments (osm_id);
 
---get attributes from the cincy_line table
+--get attributes from the cincy_line table (the one imported with osm2pgsql)
 UPDATE cincy_segments AS cs
 	SET 
 		highway = cl.highway,
